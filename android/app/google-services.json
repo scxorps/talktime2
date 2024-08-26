@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61753747776",
+    "project_id": "talktime2-defda",
+    "storage_bucket": "talktime2-defda.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61753747776:android:ff2393c74275367eac32a5",
+        "android_client_info": {
+          "package_name": "com.example.talktime2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-7MW3TI9_d_RWe2iXhgWptF8ps-RSMD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
