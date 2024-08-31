@@ -17,7 +17,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late TextEditingController _usernameController;
   late TextEditingController _newPasswordController;
   String _profilePictureUrl = 'assets/images/defaultpic.png'; // Default picture
-  File? _profilePictureFile;
+  //File? _profilePictureFile;
 
   @override
   void initState() {
