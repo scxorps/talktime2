@@ -1,0 +1,1 @@
+ C:\\developement\\flutter-apps\\talktime2\\.dart_tool\\flutter_build\\2974612cfe82713ff06679221f6ef0ef\\native_assets.yaml: 
