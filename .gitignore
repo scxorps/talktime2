@@ -24,9 +24,10 @@ migrate_working_dir/
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-
+.dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
@@ -41,3 +42,105 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android related
+android/.gradle/
+android/app/.cxx/
+android/app/.cxx/Debug/*/configure_fingerprint.bin
+android/app/src/main/res/drawable-*/
+android/gradle/
+android/local.properties
+android/gradlew
+android/gradlew.bat
+*.keystore
+*.jks
+
+# iOS related
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/Flutter/flutter_export_environment.sh
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+*.mobileprovision
+*.p12
+
+# Web related
+web/flutter_service_worker.js
+web/index.html.backup
+
+# Windows related
+windows/flutter/generated_plugin_registrant.cc
+windows/flutter/generated_plugin_registrant.h
+windows/flutter/generated_plugins.cmake
+
+# Linux related
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+
+# macOS related
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Coverage
+coverage/
+
+# Firebase
+.firebase/
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+**/web/firebase-config.js
+
+# Environment variables
+.env
+.env.local
+.env.production
+.env.test
+
+# API Keys and Secrets
+**/*-key.json
+**/*-service-account.json
+**/secrets.json
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# Log files
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache directories
+.cache/
+tmp/
+temp/
+
+# Editor directories and files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Test related
+test_driver/screenshots/
+integration_test/reports/
