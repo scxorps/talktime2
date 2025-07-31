@@ -1,0 +1,2 @@
+C:/developement/flutter-apps/talktime2/android/app/.cxx/Debug/1d5w1jwn/x86_64/CMakeFiles/edit_cache.dir
+C:/developement/flutter-apps/talktime2/android/app/.cxx/Debug/1d5w1jwn/x86_64/CMakeFiles/rebuild_cache.dir
