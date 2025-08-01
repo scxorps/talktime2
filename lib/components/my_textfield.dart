@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+
 class MyTextfield extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
   final FocusNode? focusNode;
+  final ValueChanged<String>? onChanged;
 
   const MyTextfield({
     super.key,
@@ -12,6 +14,7 @@ class MyTextfield extends StatelessWidget {
     required this.obscureText,
     required this.controller,
     this.focusNode,
+    this.onChanged,
   });
 
   @override
@@ -22,6 +25,7 @@ class MyTextfield extends StatelessWidget {
         obscureText: obscureText,
         controller: controller,
         focusNode: focusNode,
+        onChanged: onChanged,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30), // Rounded corners

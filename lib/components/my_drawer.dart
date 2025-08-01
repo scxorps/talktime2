@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:talktime2/pages/Profile_Page.dart';
 import 'package:talktime2/services/auth/auth_service.dart';
 import 'package:talktime2/pages/settings_page.dart';
+import 'package:talktime2/pages/chatrooms_page.dart';
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -54,6 +55,21 @@ class MyDrawer extends StatelessWidget {
                   onTap: () {
                     // POP THE DRAWER
                     Navigator.pop(context);
+                  },
+                ),
+              ),
+              // Chatrooms list tile
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: ListTile(
+                  title: Text("C O N V E R S A T I O N S"),
+                  leading: Icon(Icons.forum),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatRoomsPage()),
+                    );
                   },
                 ),
               ),

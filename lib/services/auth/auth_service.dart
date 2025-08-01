@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:talktime2/models/user.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -7,6 +8,63 @@ class AuthService {
 
   User? getCurrentUser() {
     return _auth.currentUser;
+  }
+
+  // Get current user as AppUser model
+  Future<AppUser?> getCurrentAppUser() async {
+    final User? firebaseUser = _auth.currentUser;
+    if (firebaseUser == null) return null;
+
+    try {
+      final doc = await _firestore.collection('Users').doc(firebaseUser.uid).get();
+      if (doc.exists) {
+        return AppUser.fromFirestore(doc);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching current user: $e');
+      return null;
+    }
+  }
+
+  // Get any user by UID as AppUser model
+  Future<AppUser?> getUserByUID(String uid) async {
+    try {
+      final doc = await _firestore.collection('Users').doc(uid).get();
+      if (doc.exists) {
+        return AppUser.fromFirestore(doc);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching user by UID: $e');
+      return null;
+    }
+  }
+
+  // Update user's last seen timestamp
+  Future<void> updateLastSeen() async {
+    final User? firebaseUser = _auth.currentUser;
+    if (firebaseUser == null) return;
+
+    try {
+      await _firestore.collection('Users').doc(firebaseUser.uid).update({
+        'lastSeen': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      print('Error updating last seen: $e');
+    }
+  }
+
+  // Update user profile
+  Future<void> updateUserProfile(AppUser updatedUser) async {
+    try {
+      await _firestore.collection('Users').doc(updatedUser.uid).update(
+        updatedUser.toMap(),
+      );
+    } catch (e) {
+      print('Error updating user profile: $e');
+      throw Exception('Failed to update profile: $e');
+    }
   }
 
   Future<UserCredential> signInWithEmailOrUsername(String identifier, String password) async {
@@ -46,7 +104,24 @@ class AuthService {
 
   Future<UserCredential> signUpWithEmailPassword(String email, String password, String username) async {
     try {
-      // Register user with email and password
+      // Validate input
+      if (!AppUser.isValidEmailStatic(email)) {
+        throw Exception('Invalid email format. Please enter a valid email address.');
+      }
+      if (!AppUser.isValidUsernameStatic(username)) {
+        throw Exception('Invalid username. Must be 3-30 characters, letters, numbers, dots, hyphens, and underscores only.');
+      }
+
+      // Check if username is already taken
+      final usernameQuery = await _firestore.collection('Users')
+          .where('username', isEqualTo: username)
+          .get();
+      
+      if (usernameQuery.docs.isNotEmpty) {
+        throw Exception('Username is already taken');
+      }
+
+      // Register user with Firebase Auth
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -57,25 +132,24 @@ class AuthService {
         throw Exception('User credential is null');
       }
 
-      // Log user details for debugging
-      print('User registered with UID: ${userCredential.user!.uid}');
-      print('User email: $email');
-      print('User username: $username');
+      // Create AppUser model
+      final newUser = AppUser(
+        uid: userCredential.user!.uid,
+        email: email,
+        username: username,
+        profilePicture: 'assets/images/defaultpic.png',
+        createdAt: DateTime.now(),
+        lastSeen: DateTime.now(),
+      );
 
-      // Get the default profile picture URL
-      String defaultProfilePicUrl = 'assets/images/defaultpic.png'; // Replace with a valid URL or method to get it
-
-      // Save user data to Firestore
+      // Save user data to Firestore using AppUser model
       await _firestore.collection('Users').doc(userCredential.user!.uid).set(
-        {
-          'email': email,
-          'uid': userCredential.user!.uid,
-          'username': username,
-          'profilePicture': defaultProfilePicUrl, // Add profilePicture field
-        },
+        newUser.toMap(),
       );
 
       print('User registered and saved to Firestore successfully.');
+      print('User data: ${newUser.toMap()}');
+      
       return userCredential;
     } on FirebaseAuthException catch (e) {
       print('FirebaseAuthException during sign-up: ${e.message}');

@@ -3,6 +3,7 @@ import 'package:talktime2/components/My_AppBar.dart'; // Import the custom MyApp
 import 'package:talktime2/components/user_tile.dart';
 import 'package:talktime2/services/auth/auth_service.dart';
 import 'package:talktime2/services/chat/chat_service.dart';
+import 'package:talktime2/models/user.dart';
 
 class BlockedUsersPage extends StatelessWidget {
   BlockedUsersPage({super.key});
@@ -45,7 +46,7 @@ class BlockedUsersPage extends StatelessWidget {
         title: "BLOCKED USERS",
         actions: [], // Customize actions here if needed
       ),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
+      body: StreamBuilder<List<AppUser>>(
         stream: chatService.getBlockedUsersStream(userId),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
@@ -75,8 +76,8 @@ class BlockedUsersPage extends StatelessWidget {
             itemBuilder: (context, index) {
               final user = blockedUsers[index];
               return UserTile(
-                text: user["email"] ?? "Unknown",
-                onTap: () => _showUnblockBox(context, user['uid'] ?? ''),
+                text: user.displayName,
+                onTap: () => _showUnblockBox(context, user.uid),
               );
             },
           );

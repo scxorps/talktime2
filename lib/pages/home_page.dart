@@ -5,6 +5,7 @@ import 'package:talktime2/components/user_tile.dart';
 import 'package:talktime2/pages/chat_page.dart';
 import 'package:talktime2/services/auth/auth_service.dart';
 import 'package:talktime2/services/chat/chat_service.dart';
+import 'package:talktime2/models/user.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -25,7 +26,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MyAppBar(
-        title: "Messages",
+        title: "All Users",
         actions: [],  // Add logout button or other actions here if needed
       ),
       drawer: MyDrawer(),
@@ -34,7 +35,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildUserList() {
-  return StreamBuilder<List<Map<String, dynamic>>>(
+  return StreamBuilder<List<AppUser>>(
     stream: _chatService.getUsersSortedByLatestMessage(),
     builder: (context, snapshot) {
       if (snapshot.hasError) {
@@ -46,19 +47,7 @@ class HomePage extends StatelessWidget {
       }
 
       final users = snapshot.data ?? [];
-      print("Users received from stream: $users");
-
-      // Sort users by latest message timestamp
-      users.sort((a, b) {
-        final timestampA = a['latestMessageTimestamp']?.seconds ?? 0;
-        final timestampB = b['latestMessageTimestamp']?.seconds ?? 0;
-        return timestampB.compareTo(timestampA); // Sort descending
-      });
-
-      print("Sorted Users:");
-      for (var user in users) {
-        print("Username: ${user['username']}, Profile Picture: ${user['profilePicture']}, Last Interaction: ${user['latestMessageTimestamp']}");
-      }
+      print("Users received from stream: ${users.length} users");
 
       if (users.isEmpty) {
         return const Center(child: Text("No users available"));
@@ -66,45 +55,44 @@ class HomePage extends StatelessWidget {
 
       return ListView(
         children: users
-            .where((userData) => userData["username"] != _authService.getCurrentUser()?.displayName)
-            .map((userData) {
-              final userId = userData["uid"];
-              print("Processing user: ${userData["username"]}");
+            .where((user) => user.username != _authService.getCurrentUser()?.displayName)
+            .map((user) {
+              print("Processing user: ${user.username}");
 
               return StreamBuilder<Map<String, dynamic>>(
-                stream: _chatService.getLatestMessageForUser(userId),
+                stream: _chatService.getLatestMessageForUser(user.uid),
                 builder: (context, messageSnapshot) {
                   if (messageSnapshot.hasError) {
-                    print("Error fetching latest message for ${userData["username"]}: ${messageSnapshot.error}");
+                    print("Error fetching latest message for ${user.username}: ${messageSnapshot.error}");
                     return ListTile(
-                      title: Text(userData["username"]),
+                      title: Text(user.username),
                       subtitle: Text('Error: ${messageSnapshot.error}'),
                     );
                   }
 
                   if (!messageSnapshot.hasData) {
-                    print("Loading message for ${userData["username"]}");
+                    print("Loading message for ${user.username}");
                     return ListTile(
-                      title: Text(userData["username"]),
+                      title: Text(user.username),
                       subtitle: Text('Loading...'),
                     );
                   }
 
                   final latestMessage = messageSnapshot.data?['message'] ?? 'Start a conversation';
-                  print("Latest message for ${userData["username"]}: $latestMessage");
+                  print("Latest message for ${user.username}: $latestMessage");
 
                   return UserTile(
-                    text: userData["username"],
+                    text: user.username,
                     latestMessage: latestMessage,
-                    profilePictureUrl: userData["profilePicture"], // Pass profile picture URL
+                    profilePictureUrl: user.profileImageUrl, // Use the getter from AppUser
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ChatPage(
-                            receiverEmail: userData["email"],
-                            receiverID: userData["uid"],
-                            receiverUsername: userData["username"],
+                            receiverEmail: user.email,
+                            receiverID: user.uid,
+                            receiverUsername: user.username,
                           ),
                         ),
                       );
